@@ -151,10 +151,16 @@ def receive_position():
     existing_data.append(data)
 
     # Write the updated data to the file
-    with open("position_data.json", "w") as json_file:
-        json.dump(existing_data, json_file)
+    with open("position_data.json", "w") as json_file1:
+        json.dump(existing_data, json_file1)
 
-    return jsonify(position_data), 200
+    with open("received_position_data1.json", "r") as json_file2:
+        existing_data2 = json.load(json_file2)
+    
+    with open("received_position_data2.json", "r") as json_file3:
+        existing_data3 = json.load(json_file3)
+
+    return jsonify(existing_data+existing_data2+existing_data3), 200
 
 
 if __name__ == "__main__":
