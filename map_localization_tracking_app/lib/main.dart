@@ -4,7 +4,7 @@ import 'dart:math';
 
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/services.dart';
-import 'package:wifi_info_flutter/wifi_info_flutter.dart';
+// import 'package:wifi_info_flutter/wifi_info_flutter.dart';
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -25,7 +25,7 @@ class _MyAppState extends State<MyApp> {
 
   final LatLng _center = const LatLng(34.7282712, 10.7155989);
   List<Marker> markers = [];
-
+  String srvUrl = "";
   @override
   void initState() {
     super.initState();
@@ -49,7 +49,7 @@ class _MyAppState extends State<MyApp> {
             onMapCreated: _onMapCreated,
             initialCameraPosition: CameraPosition(
               target: _center,
-              zoom: 22.0,
+              zoom: 17.0,
             ),
             markers: Set<Marker>.from(markers),
           )),
@@ -69,42 +69,34 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<String> getWifiIP() async {
-  final connectivityResult = await (Connectivity().checkConnectivity());
-  if (connectivityResult == ConnectivityResult.wifi) {
-    try {
-      final result = await const MethodChannel("wifi_info_flutter").invokeMethod("wifiIPAddress");
-      return result ?? 'IP address not found';
-    } on PlatformException catch (e) {
-      return 'Error: ${e.message}';
+    final connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.wifi) {
+      try {
+        final result = await const MethodChannel("wifi_info_flutter")
+            .invokeMethod("wifiIPAddress");
+        return result ?? 'IP address not found';
+      } on PlatformException catch (e) {
+        return 'Error: ${e.message}';
+      }
+    } else {
+      return 'Not connected to WiFi';
     }
-  } else {
-    return 'Not connected to WiFi';
   }
-}
+
 // Publish the location data to the MQTT topic
   Future<void> _publishLocation(
       double latitude, double longitude, String ipAdress) async {
-    // final Random random = Random();
-    // final List<String> servers = [
-    //   'http://192.168.112.151:5000/position',
-    //   'http://192.168.112.104:5000/position',
-    //   'http://192.168.112.238:5000/position',
-    // ];
-
-    // // Choose a random URL
-    // final String randomUrl = servers[random.nextInt(servers.length)];
-    String randomUrl = 'http://192.168.112.104:5000/position';
     try {
       print(ipAdress);
       // Create a JSON payload with latitude and longitude
       final payload = {
-        'ipAdress': ipAdress,
+        'id': "$latitude$longitude",
         'content': {'latitude': latitude, 'longitude': longitude}
       };
       String message = json.encode(payload);
 
       final response = await http.post(
-        Uri.parse(randomUrl),
+        Uri.parse(srvUrl),
         headers: {'Content-Type': 'application/json'},
         body: message,
       );
@@ -113,19 +105,19 @@ class _MyAppState extends State<MyApp> {
         print(json.decode(response.body).runtimeType);
         List<dynamic> responseData = json.decode(response.body);
         // Now you can iterate through the list and access each map as needed
-        int i = 0;
+
         for (var item in responseData) {
-          var ipAdress = item['ipAdress'];
+          var id = item['id'];
           var lat = item['content']['latitude'];
           var long = item['content']['longitude'];
           var timeStamp = item['timestamp'];
           // final markerId = MarkerId(ipAddress);
           setState(() {
             markers.add(Marker(
-              markerId: MarkerId(ipAdress),
+              markerId: MarkerId(id),
               position: LatLng(lat, long),
               infoWindow: InfoWindow(
-                title: '$ipAdress',
+                title: '$lat$long',
                 snippet: 'Lat: $lat, Lng: $long',
               ),
             ));
@@ -133,6 +125,7 @@ class _MyAppState extends State<MyApp> {
         }
       } else {
         print('Failed to send request. Status code: ${response.statusCode}');
+        srvUrl = await getUrl();
       }
     } catch (e) {
       print('Error sending request: $e');
@@ -141,8 +134,21 @@ class _MyAppState extends State<MyApp> {
 
   // [ {'ipAdress' : '1.1.1.1', 'content' : {'latitude': '3.1111', 'longitude': '4.2222'}}
 // with timer
+  Future<String> getUrl() async {
+    final Random random = Random();
+    final List<String> servers = [
+      'http://192.168.112.151:5000/position',
+      'http://192.168.112.104:5000/position',
+    ];
+
+    // Choose a random URL
+    final String randomUrl = servers[random.nextInt(servers.length)];
+    return randomUrl;
+  }
+
   Future<void> _trackme() async {
-    final String ipAddress = await getWifiIP();
+    final String ipAddress = await _getIPAddress();
+    srvUrl = await getUrl();
     //it will call location api every 3 seconds
     Timer.periodic(const Duration(seconds: 5), (timer) async {
       Position position = await Geolocator.getCurrentPosition(
