@@ -27,7 +27,7 @@ senderPort1 = 65433
 
 # Define the host and port of the server
 senderId2= 2
-senderIp2 = '192.168.1.60'  # Replace with the server's IP address
+senderIp2 = '10.25.13.25'  # Replace with the server's IP address
 senderPort2 = 65432
 
 position_data = []
