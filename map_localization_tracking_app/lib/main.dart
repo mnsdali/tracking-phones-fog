@@ -8,20 +8,65 @@ import 'package:http/http.dart' as http;
 
 void main() => runApp(MyApp());
 
-// ignore: use_key_in_widget_constructors
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: MyMapPage(),
+      home: LoginPage(),
     );
   }
 }
 
-// ignore: use_key_in_widget_constructors
-class MyMapPage extends StatefulWidget {
+class LoginPage extends StatefulWidget {
   @override
-  // ignore: library_private_types_in_public_api
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  TextEditingController phoneNumberController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Login Page'),
+        backgroundColor: Colors.blue,
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextField(
+              controller: phoneNumberController,
+              decoration: InputDecoration(
+                labelText: 'Enter your phone number',
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final phoneNumber = phoneNumberController.text;
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MyMapPage(phoneNumber: phoneNumber),
+                  ),
+                );
+              },
+              child: Text('Login and Start Map'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class MyMapPage extends StatefulWidget {
+  final String phoneNumber;
+
+  MyMapPage({required this.phoneNumber});
+
+  @override
   _MyMapPageState createState() => _MyMapPageState();
 }
 
@@ -36,7 +81,6 @@ class _MyMapPageState extends State<MyMapPage> {
   void initState() {
     super.initState();
 
-    // Create a timer to remove markers every 60 seconds
     markerRemovalTimer = Timer.periodic(const Duration(seconds: 60), (timer) {
       removeMarkers();
     });
@@ -60,7 +104,8 @@ class _MyMapPageState extends State<MyMapPage> {
   }
 
   Future<String> _getIPAddress() async {
-    final response = await http.get(Uri.parse('https://api.ipify.org?format=json'));
+    final response =
+        await http.get(Uri.parse('https://api.ipify.org?format=json'));
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -70,10 +115,11 @@ class _MyMapPageState extends State<MyMapPage> {
     }
   }
 
-  Future<void> _publishLocation(double latitude, double longitude, String ipAddress) async {
+  Future<void> _publishLocation(
+      double latitude, double longitude, String phoneNumber) async {
     try {
       final payload = {
-        'id': '$latitude$longitude',
+        'id': phoneNumber, // Use the phone number as the ID
         'content': {'latitude': latitude, 'longitude': longitude}
       };
       String message = json.encode(payload);
@@ -105,28 +151,42 @@ class _MyMapPageState extends State<MyMapPage> {
           });
         }
       } else {
-        // ignore: avoid_print
         print('Failed to send request. Status code: ${response.statusCode}');
+        srvUrl = await getUrl();
       }
     } catch (e) {
-      // ignore: avoid_print
       print('Error sending request: $e');
     }
   }
 
+  Future<String> getUrl() async {
+    List<String> servers = [
+      'http://192.168.103.238:5000/position',
+      'http://192.168.103.104:5000/position'
+      // 'http://10.25.13.25:5000/position'
+    ];
+
+    // Generate a random index to select a server
+    final random = Random();
+    final randomIndex = random.nextInt(servers.length);
+
+    // Return the randomly selected server URL
+    return servers[randomIndex];
+  }
+
   Future<void> _trackMe() async {
     final String ipAddress = await _getIPAddress();
-    srvUrl = 'http://10.25.14.172:5000/position';
-
+    //srvUrl = 'http://10.26.13.94:5000/position';
+    srvUrl = await getUrl();
     Timer.periodic(const Duration(seconds: 5), (timer) async {
       Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
+        desiredAccuracy: LocationAccuracy.high,
+      );
 
-      // ignore: avoid_print
       print("Latitude: ${position.latitude}");
-      // ignore: avoid_print
       print("Longitude: ${position.longitude}");
-      await _publishLocation(position.latitude, position.longitude, ipAddress);
+      await _publishLocation(
+          position.latitude, position.longitude, widget.phoneNumber);
     });
   }
 
@@ -140,14 +200,14 @@ class _MyMapPageState extends State<MyMapPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Maps Localization Tracking For Phones'),
+        title: Text('Maps Localization Tracking For Phones'),
         backgroundColor: Colors.green[700],
       ),
       body: GoogleMap(
         onMapCreated: _onMapCreated,
         initialCameraPosition: CameraPosition(
           target: _center,
-          zoom: 17.0,
+          zoom: 13.0,
         ),
         markers: Set<Marker>.from(markers),
       ),

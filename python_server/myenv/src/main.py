@@ -22,12 +22,12 @@ portSocket2 = 65432
 
 # Define the host and port of the server
 senderId1= 1
-senderIp1 = '192.168.112.151'  # Replace with the server's IP address
+senderIp1 = '10.26.13.94'  # Replace with the server's IP address
 senderPort1 = 65433
 
 # Define the host and port of the server
 senderId2= 2
-senderIp2 = '10.25.13.25'  # Replace with the server's IP address
+senderIp2 = "192.168.103.104"  # Replace with the server's IP address
 senderPort2 = 65432
 
 position_data = []
@@ -49,7 +49,6 @@ def remove_oldest_data():
 
         print('Old data removed!')
         time.sleep(45)
-
 
 def socket_send(host, port):
     while True:
@@ -77,8 +76,7 @@ def socket_send(host, port):
                 conn.close()
                 
             time.sleep(10)
-    
-    
+     
 def socket_receive(id, host, port):
     while True:
         try:
@@ -124,7 +122,6 @@ def socket_receive(id, host, port):
             client_socket.close()
         time.sleep(10)
 
-
 # flutter request
 @app.route("/position", methods=["POST"])
 def receive_position():
@@ -162,7 +159,6 @@ def receive_position():
 
     return jsonify(existing_data+existing_data2+existing_data3), 200
 
-
 if __name__ == "__main__":
     # Create processes for each function
     socket_receive_process1 = Process(target=socket_receive, args=(senderId1, senderIp1, senderPort1))
@@ -187,3 +183,4 @@ if __name__ == "__main__":
     socket_send_process1.join()
     socket_send_process2.join()
     remove_process.join()
+
