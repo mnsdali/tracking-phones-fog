@@ -7,89 +7,106 @@
 
 
 
-Ce projet Python est une application serveur qui permet de suivre en temps réel la localisation des utilisateurs. Les utilisateurs envoient leurs données de localisation depuis des appareils clients, et le serveur affiche ces données sur une carte. L'application utilise Flask pour créer une API permettant aux clients d'envoyer et de recevoir des données de localisation.
+# Real-time User Location Tracking Server
 
-## Caractéristiques principales
+This Python project is a server application that allows real-time tracking of user locations. Users send their location data from client devices, and the server displays this data on a map. The application uses Flask to create an API that enables clients to send and receive location data.
 
-- **Suivi en temps réel** : Suivez la localisation des utilisateurs depuis des appareils clients en temps réel.
-- **Communication via des sockets TCP** : Assurez une communication fiable entre le serveur et les clients.
-- **Stockage des données de localisation Temporaire** : Stockez les données de localisation des utilisateurs avec horodatage pour une analyse ultérieure.
-- **Optimisation de la performance** : Supprimez périodiquement les données anciennes pour garantir des performances optimales.
-- **Prise en charge de plusieurs clients** : Gérez simultanément les données de plusieurs utilisateurs.
+## Key Features
 
-## Démarrage
+- **Real-time Tracking**: Track user locations from client devices in real-time.
+- **TCP Socket Communication**: Ensure reliable communication between the server and clients.
+- **Temporary Location Data Storage**: Store user location data with timestamps for later analysis.
+- **Performance Optimization**: Periodically delete old data to ensure optimal performance.
+- **Support for Multiple Clients**: Simultaneously manage data from multiple users.
 
-### Prérequis
+## Getting Started
 
-Avant de commencer, assurez-vous d'avoir installé [Python](https://www.python.org/) et les dépendances suivantes  dans un environnement Virtuel :
+### Prerequisites
+
+Before starting, make sure you have installed [Python](https://www.python.org/) and the following dependencies in a virtual environment:
 
 ### Installation
-1.VirtualEnviroment 
 
-  ```sh
-      pip install virtualenv
-  ```
-2.Python Envµ
+1. Virtual Environment
 
-  ```sh
-     python -m venv <directory>
-  ```
-3. Requirments
+    ```sh
+    pip install virtualenv
+    ```
+
+2. Python Environment
+
+    ```sh
+    python -m venv <directory>
+    ```
+
+3. Requirements
+
     - Flask
     - Flask_Cors
     - Requests
 
-4. Clonez le dépôt :
+4. Clone the repository:
+
     ```sh
-   git clone https://github.com/MohamedBenRhouma/Local-tracking-phones-fog-computing.git
+    git clone https://github.com/MohamedBenRhouma/Local-tracking-phones-fog-computing.git
     ```
 
-5. Configurez les paramètres de reseaux et les ports.
-6.Lancez l'application Serveur et aprés le code Flutter
-    ```sh
-          python app.py
-    ```
-   ## Contribuer
+5. Configure the network settings and ports.
 
-Toutes les contributions sont les bienvenues ! Si vous souhaitez contribuer au développement de ce projet, suivez ces étapes :
+6. Launch the Server application and then the Flutter code:
 
-1. **Clonez le projet** :
     ```sh
-      git clone https://github.com/MohamedBenRhouma/Local-tracking-phones-fog-computing.git
+    python app.py
     ```
 
-2-**Créez une nouvelle branche** pour votre travail :
+## Contributing
+
+All contributions are welcome! If you want to contribute to the development of this project, follow these steps:
+
+1. **Clone the project**:
+
     ```sh
-          git checkout -b feature/NouvelleFonctionnalite
+    git clone https://github.com/MohamedBenRhouma/Local-tracking-phones-fog-computing.git
     ```
-   
-3. **Faites vos modifications** et assurez-vous de suivre les normes de codage du projet.
-4. **Commitez vos modifications** avec un message descriptif :
-   
+
+2. **Create a new branch** for your work:
+
     ```sh
-    git commit -m 'Ajouter une nouvelle fonctionnalité'
+    git checkout -b feature/NewFeature
     ```
-   
-6. **Poussez votre branche** vers le dépôt distant :
-   
+
+3. **Make your changes** and ensure you follow the project's coding standards.
+
+4. **Commit your changes** with a descriptive message:
+
     ```sh
-     git push origin feature/NouvelleFonctionnalite
+    git commit -m 'Add a new feature'
     ```
-   
-8. **Ouvrez une demande de tirage** (Pull Request) sur GitHub. Assurez-vous de fournir une description détaillée de vos modifications.
-9. Votre demande de tirage sera examinée, et une fois approuvée, elle sera fusionnée dans le projet.
 
-Si vous avez des questions ou des idées à discuter, n'hésitez pas à ouvrir une nouvelle issue.
+5. **Push your branch** to the remote repository:
 
-## Remerciements
+    ```sh
+    git push origin feature/NewFeature
+    ```
 
-Nous aimerions exprimer notre gratitude envers les personnes, projets et ressources qui ont inspiré et contribué à ce projet. Leur soutien a été précieux et a contribué à rendre ce projet possible.
+6. **Open a pull request** on GitHub. Make sure to provide a detailed description of your changes.
 
-Nous remercions tout particulièrement les personnes suivantes :
+7. Your pull request will be reviewed, and once approved, it will be merged into the project.
 
-  &nbsp;&nbsp;&nbsp; -Mohamed Ali mnasser : https://github.com/mnsdali     &nbsp;     &nbsp;   &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;                  -Amine Abid : https://github.com/Amine-ABID                                         &nbsp;        &nbsp;&nbsp;&nbsp;    -Assil Bouaziz : 
+If you have any questions or ideas to discuss, feel free to open a new issue.
 
-Votre soutien et vos contributions sont grandement appréciés.
+## Acknowledgements
+
+We would like to express our gratitude to the people, projects, and resources that inspired and contributed to this project. Their support has been invaluable and has helped make this project possible.
+
+Special thanks to the following people:
+
+- Mohamed Ali Mnasser: [https://github.com/mnsdali](https://github.com/mnsdali)
+- Amine Abid: [https://github.com/Amine-ABID](https://github.com/Amine-ABID)
+- Assil Bouaziz
+
+Your support and contributions are greatly appreciated.
+
 
 
 
